@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariner-app
+  labels:
+    app: mariner-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mariner-app
+  template:
+    metadata:
+      labels:
+        app: mariner-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: workload
+                operator: In
+                values:
+                - mariner
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            preference:
+              matchExpressions:
+              - key: environment
+                operator: In
+                values:
+                - production
+      tolerations:
+      - key: "workload"
+        operator: "Equal"
+        value: "mariner"
+        effect: "NoSchedule"
+      containers:
+      - name: mariner-app
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name 

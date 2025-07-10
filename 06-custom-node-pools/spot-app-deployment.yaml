@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spot-app
+  labels:
+    app: spot-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: spot-app
+  template:
+    metadata:
+      labels:
+        app: spot-app
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: workload
+                operator: In
+                values:
+                - spot
+      tolerations:
+      - key: "workload"
+        operator: "Equal"
+        value: "spot"
+        effect: "NoSchedule"
+      containers:
+      - name: spot-app
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        env:
+        - name: ENVIRONMENT
+          value: "spot" 
