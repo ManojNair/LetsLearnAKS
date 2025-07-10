@@ -263,6 +263,33 @@ docker stats
    - Rollback capabilities
    - Canary deployments
 
+### Deploying to Kubernetes
+
+Now let's see how the same application is deployed using Kubernetes:
+
+```bash
+# Create a namespace for our demo
+kubectl create namespace orchestration-demo
+
+# Deploy Redis first
+kubectl apply -f k8s-redis.yaml -n orchestration-demo
+
+# Deploy the application
+kubectl apply -f k8s-deployment.yaml -n orchestration-demo
+
+# Deploy the Horizontal Pod Autoscaler
+kubectl apply -f k8s-hpa.yaml -n orchestration-demo
+
+# Check the deployment status
+kubectl get pods -n orchestration-demo
+kubectl get services -n orchestration-demo
+kubectl get hpa -n orchestration-demo
+
+# Test the application
+kubectl port-forward svc/multi-service-app-service 8080:80 -n orchestration-demo
+curl http://localhost:8080/
+```
+
 ## Step 6: Kubernetes vs Manual Management
 
 ### Manual Management:
@@ -286,17 +313,23 @@ docker run -d --name app3 --link redis:redis app:latest
 ### Kubernetes Management:
 ```bash
 # Deploy with a single command
-kubectl apply -f deployment.yaml
+kubectl apply -f k8s-deployment.yaml -n orchestration-demo
 
 # Automatic service discovery
-kubectl get services
+kubectl get services -n orchestration-demo
 
 # Automatic scaling
-kubectl scale deployment app --replicas=5
+kubectl scale deployment multi-service-app --replicas=5 -n orchestration-demo
 
 # Automatic health monitoring
-kubectl get pods
-kubectl describe pod <pod-name>
+kubectl get pods -n orchestration-demo
+kubectl describe pod <pod-name> -n orchestration-demo
+
+# Automatic load balancing
+kubectl get endpoints -n orchestration-demo
+
+# Check logs
+kubectl logs -l app=multi-service-app -n orchestration-demo
 ```
 
 ## Step 7: Real-World Production Challenges
@@ -343,6 +376,7 @@ kubectl describe pod <pod-name>
 
 ## Step 9: Cleanup
 
+### Clean up Docker resources:
 ```bash
 # Stop and remove all containers
 docker stop $(docker ps -q)
@@ -353,6 +387,17 @@ docker rmi node-app:latest
 
 # Clean up networks
 docker network prune -f
+```
+
+### Clean up Kubernetes resources:
+```bash
+# Delete the namespace (this will remove all resources)
+kubectl delete namespace orchestration-demo
+
+# Or delete individual resources
+kubectl delete -f k8s-deployment.yaml -n orchestration-demo
+kubectl delete -f k8s-redis.yaml -n orchestration-demo
+kubectl delete -f k8s-hpa.yaml -n orchestration-demo
 ```
 
 ## Key Takeaways
