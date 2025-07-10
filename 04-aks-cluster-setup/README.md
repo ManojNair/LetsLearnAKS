@@ -82,7 +82,7 @@ az aks install-cli
 ```bash
 # Set variables
 RESOURCE_GROUP="aks-demo-rg"
-LOCATION="eastus"
+LOCATION="australiaeast"
 
 # Create resource group
 az group create --name $RESOURCE_GROUP --location $LOCATION
