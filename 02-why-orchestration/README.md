@@ -59,7 +59,7 @@ npm install
 docker build -t node-app:latest .
 
 # Run with Docker Compose (recommended for this demo)
-docker-compose up -d
+docker compose up -d
 
 # Or run manually with individual containers
 docker run -d --name redis-server redis:7-alpine
@@ -84,7 +84,7 @@ docker logs app-server
 
 ```bash
 # Start Redis container
-docker run -d --name redis-server redis:alpine
+docker run -d --name redis-server redis:7-alpine
 
 # Start the application container
 docker run -d --name app-server \
@@ -387,4 +387,40 @@ docker stats
 
 # Inspect container details
 docker inspect <container-name>
-``` 
+
+# Check Redis connection
+docker exec -it redis-server redis-cli ping
+
+# Test application connectivity
+curl http://localhost:3000/health
+```
+
+### Troubleshooting Redis Connection Issues:
+
+If you get `{"error":"The client is closed"}` error:
+
+1. **Check if Redis is running:**
+   ```bash
+   docker ps | grep redis
+   ```
+
+2. **Check Redis logs:**
+   ```bash
+   docker logs redis-server
+   ```
+
+3. **Test Redis connectivity:**
+   ```bash
+   docker exec -it redis-server redis-cli ping
+   ```
+
+4. **Restart the application container:**
+   ```bash
+   docker restart app-server
+   ```
+
+5. **Use Docker Compose (recommended):**
+   ```bash
+   docker compose down
+   docker compose up -d
+   ``` 
