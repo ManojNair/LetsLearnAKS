@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: app
-        image: multi-service-app:latest
+        image: multi-service-app-app:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 3000
         env:
