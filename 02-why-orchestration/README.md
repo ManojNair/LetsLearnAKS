@@ -38,53 +38,44 @@ cd 02-why-orchestration
 
 ## Step 2: Creating a Multi-Service Application
 
-Let's create a more complex application that demonstrates orchestration needs:
+The multi-service application has been created in the `multi-service-app` directory. It includes:
+
+- **app.js**: Express.js application with Redis integration
+- **package.json**: Node.js dependencies
+- **Dockerfile**: Container configuration
+- **docker-compose.yml**: Multi-container orchestration
+- **.dockerignore**: Excludes unnecessary files from build
+
+### Building and Running the Application
 
 ```bash
-# Create a simple web application that depends on a database
-mkdir multi-service-app
+# Navigate to the multi-service app directory
 cd multi-service-app
-```
 
-Create a simple Node.js application that demonstrates service dependencies:
+# Install dependencies (for local development)
+npm install
 
-```javascript
-// app.js
-const express = require('express');
-const redis = require('redis');
-const app = express();
-const port = 3000;
+# Build the Docker image
+docker build -t node-app:latest .
 
-// Redis client
-const client = redis.createClient({
-    host: process.env.REDIS_HOST || 'localhost',
-    port: process.env.REDIS_PORT || 6379
-});
+# Run with Docker Compose (recommended for this demo)
+docker-compose up -d
 
-client.on('error', (err) => console.log('Redis Client Error', err));
+# Or run manually with individual containers
+docker run -d --name redis-server redis:7-alpine
+docker run -d --name app-server \
+  --link redis-server:redis \
+  -p 3000:3000 \
+  -e REDIS_HOST=redis \
+  node-app:latest
 
-app.get('/', async (req, res) => {
-    try {
-        // Increment visit counter
-        const visits = await client.incr('visits');
-        res.json({
-            message: 'Hello from Multi-Service App!',
-            visits: visits,
-            timestamp: new Date().toISOString(),
-            hostname: require('os').hostname()
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+# Test the application
+curl http://localhost:3000/
+curl http://localhost:3000/health
 
-app.get('/health', (req, res) => {
-    res.json({ status: 'healthy', timestamp: new Date().toISOString() });
-});
-
-app.listen(port, () => {
-    console.log(`App listening at http://localhost:${port}`);
-});
+# Check container status
+docker ps
+docker logs app-server
 ```
 
 ## Step 3: Manual Container Deployment Challenges

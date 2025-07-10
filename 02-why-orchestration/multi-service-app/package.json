@@ -1,0 +1,26 @@
+{
+  "name": "multi-service-app",
+  "version": "1.0.0",
+  "description": "Multi-service application demonstrating orchestration challenges",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "redis": "^4.6.10"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "redis",
+    "docker",
+    "kubernetes"
+  ],
+  "author": "AKS Demo",
+  "license": "MIT"
+} 
