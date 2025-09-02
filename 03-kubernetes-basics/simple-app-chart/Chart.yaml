@@ -1,0 +1,22 @@
+apiVersion: v2
+name: simple-app-chart
+description: A simple Helm chart for the Container Demo App - Kubernetes Basics Demo
+
+type: application
+
+# This is the chart version
+version: 0.1.0
+
+# This is the version of the application being deployed
+appVersion: "v1"
+
+# Additional metadata
+keywords:
+  - dotnet
+  - webapi
+  - kubernetes
+  - basics
+  - demo
+home: https://github.com/ManojNair/LetsLearnAKS
+sources:
+  - https://github.com/ManojNair/LetsLearnAKS

@@ -1,0 +1,73 @@
+# Default values for simple-app-chart.
+# This is a YAML-formatted file for the Kubernetes Basics Demo.
+
+# Number of replicas
+replicaCount: 2
+
+# Container image
+image:
+  repository: containerdemoapp
+  pullPolicy: IfNotPresent
+  tag: "v1"
+
+# Service configuration
+service:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: 8081
+      protocol: TCP
+
+# Container ports
+containerPorts:
+  - containerPort: 8080
+  - containerPort: 8081
+
+# Environment variables
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Production"
+
+# Resource limits
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "250m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+
+# Health probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# Disable features not needed for basics demo
+autoscaling:
+  enabled: false
+
+ingress:
+  enabled: false
+
+serviceAccount:
+  create: false
+
+# Simple configuration - no advanced features
+nodeSelector: {}
+tolerations: []
+affinity: {}

@@ -572,6 +572,136 @@ kubectl delete hpa containerdemoapp-hpa -n demo-apps
 kubectl delete namespace demo-apps
 ```
 
+```
+
+## Alternative: Using Helm Charts
+
+### Overview
+This demo can also be completed using Helm charts instead of raw YAML manifests. The Helm chart provides the same functionality with added benefits of parameterization, versioning, and easier management.
+
+### Why Use Helm for Production Deployments?
+- **Environment Management**: Deploy to dev, staging, and production with different configurations
+- **Version Control**: Track application and chart versions separately
+- **Rollback Capabilities**: Easy rollback to previous releases
+- **Secret Management**: Better handling of sensitive configuration
+- **Dependency Management**: Handle complex application dependencies
+
+### Quick Start with Helm
+
+```bash
+# Navigate to the demo directory
+cd 07-basic-deployment
+
+# Install the application using Helm
+helm install my-app containerdemoapp-chart --namespace demo-apps --create-namespace
+
+# Check the installation
+helm list -n demo-apps
+kubectl get pods -n demo-apps
+
+# Test the application
+kubectl port-forward service/my-app-containerdemoapp-chart 8080:80 -n demo-apps
+curl http://localhost:8080/health
+curl http://localhost:8080/weatherforecast
+
+# Check HPA status (enabled by default in Helm chart)
+kubectl get hpa -n demo-apps
+
+# Upgrade the deployment
+helm upgrade my-app containerdemoapp-chart --set replicaCount=5 -n demo-apps
+
+# Rollback if needed
+helm rollback my-app 1 -n demo-apps
+
+# Cleanup
+helm uninstall my-app -n demo-apps
+```
+
+### Production Configuration Examples
+
+```bash
+# Production deployment with custom values
+helm install prod-app containerdemoapp-chart \
+  --namespace production \
+  --create-namespace \
+  --set image.repository=your-registry.azurecr.io/containerdemoapp \
+  --set image.tag=v2.0.0 \
+  --set replicaCount=5 \
+  --set resources.requests.memory=256Mi \
+  --set resources.limits.memory=512Mi \
+  --set autoscaling.maxReplicas=20
+
+# Development deployment with different settings
+helm install dev-app containerdemoapp-chart \
+  --namespace development \
+  --create-namespace \
+  --set replicaCount=1 \
+  --set autoscaling.enabled=false \
+  --set resources.requests.memory=64Mi
+```
+
+### Using Values Files for Different Environments
+
+Create environment-specific values files:
+
+```yaml
+# production-values.yaml
+replicaCount: 5
+image:
+  repository: your-registry.azurecr.io/containerdemoapp
+  tag: v2.0.0
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "500m"
+  limits:
+    memory: "512Mi"
+    cpu: "1000m"
+autoscaling:
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+```
+
+```bash
+# Deploy to production
+helm install prod-app containerdemoapp-chart -f production-values.yaml -n production --create-namespace
+```
+
+### Helm vs Raw YAML for Production
+
+| Aspect | Raw YAML | Helm Charts |
+|---------|----------|-------------|
+| **Environment Management** | Manual file duplication | Single chart, multiple values |
+| **Secret Management** | Manual secret creation | Integrated with chart lifecycle |
+| **Rollback** | Manual kubectl commands | Simple `helm rollback` |
+| **Dependencies** | Manual coordination | Automatic dependency handling |
+| **Versioning** | Git-based only | Application + chart versioning |
+
+### Advanced Helm Features
+
+```bash
+# Test without installing
+helm install my-app containerdemoapp-chart --dry-run --debug
+
+# Generate YAML for inspection
+helm template my-app containerdemoapp-chart > generated-manifests.yaml
+
+# Check what would change in upgrade
+helm diff upgrade my-app containerdemoapp-chart --set replicaCount=10
+
+# Monitor deployment
+helm status my-app -n demo-apps
+helm history my-app -n demo-apps
+```
+
+For detailed Helm usage and configuration options, see the [Container Demo App Chart README](containerdemoapp-chart/README.md).
+
 ## Key Takeaways
 
 1. **Deployments provide** declarative updates for applications
