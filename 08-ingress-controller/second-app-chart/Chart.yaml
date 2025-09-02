@@ -1,0 +1,16 @@
+apiVersion: v2
+name: second-app-chart
+description: A Helm chart for the Second App (NGINX) - Ingress Controller Demo
+
+type: application
+
+version: 0.1.0
+appVersion: "alpine"
+
+keywords:
+  - nginx
+  - ingress
+  - demo
+home: https://github.com/ManojNair/LetsLearnAKS
+sources:
+  - https://github.com/ManojNair/LetsLearnAKS

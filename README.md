@@ -21,6 +21,7 @@ Before starting, ensure you have the following installed:
 - **Docker Desktop**: [Download here](https://www.docker.com/products/docker-desktop)
 - **Azure CLI**: [Download here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
 - **kubectl**: [Download here](https://kubernetes.io/docs/tasks/tools/)
+- **Helm** (optional): [Download here](https://helm.sh/docs/intro/install/) - For alternative deployment method
 - **Visual Studio Code** (recommended): [Download here](https://code.visualstudio.com/)
 
 ## 🚀 Quick Start
@@ -155,7 +156,72 @@ The demos use a .NET 9 Web API application that demonstrates:
 - **GitOps**: Flux v2 for declarative deployments
 - **Gateway API**: Next-generation ingress
 
-## 📖 Learning Path
+## 🚢 Deployment Options
+
+This repository provides **two approaches** for deploying applications to Kubernetes:
+
+### Raw YAML Manifests (Default)
+Each demo includes ready-to-use Kubernetes YAML manifests that you can apply directly with `kubectl`. This approach is excellent for:
+- **Learning**: Understanding Kubernetes resources and concepts
+- **Transparency**: Seeing exactly what resources are created
+- **Simplicity**: Direct application without additional tooling
+- **Debugging**: Easy to inspect and modify individual resources
+
+### Helm Charts (Alternative)
+Selected demos also include Helm charts as an alternative deployment method. Helm charts provide:
+- **Parameterization**: Customize deployments with values
+- **Reusability**: Deploy to multiple environments with different configurations
+- **Packaging**: Bundle related resources together
+- **Versioning**: Track and rollback application releases
+- **Production Ready**: Industry standard for production deployments
+
+### Available Helm Charts
+
+| Demo | Helm Chart | Description |
+|------|------------|-------------|
+| **Demo 03** | `simple-app-chart` | Basic deployment for learning Kubernetes fundamentals |
+| **Demo 07** | `containerdemoapp-chart` | Production-ready deployment with HPA, probes, and resource management |
+| **Demo 08** | `second-app-chart` | Simple NGINX app for ingress demonstrations |
+
+### When to Use Each Approach
+
+| Use Case | Raw YAML | Helm Charts |
+|----------|----------|-------------|
+| **Learning Kubernetes** | ✅ Recommended | ⚠️ After understanding basics |
+| **Single Environment** | ✅ Simple and direct | ⚠️ Overkill for simple cases |
+| **Multiple Environments** | ❌ Requires duplication | ✅ Perfect fit |
+| **Production Deployments** | ⚠️ Manual management | ✅ Industry standard |
+| **CI/CD Pipelines** | ✅ Direct control | ✅ Automated releases |
+
+### Quick Start with Helm
+
+```bash
+# Install Helm (if not already installed)
+# macOS
+brew install helm
+
+# Windows
+choco install kubernetes-helm
+
+# Linux
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Verify installation
+helm version
+```
+
+```bash
+# Example: Deploy using Helm chart
+cd 07-basic-deployment
+helm install my-app containerdemoapp-chart --namespace demo-apps --create-namespace
+
+# Example: Deploy using raw YAML
+kubectl apply -f basic-deployment.yaml
+kubectl apply -f basic-service.yaml
+kubectl apply -f hpa.yaml
+```
+
+### 📖 Learning Path
 
 ### Beginner Level (Demos 1-3)
 Start here if you're new to containers and Kubernetes:

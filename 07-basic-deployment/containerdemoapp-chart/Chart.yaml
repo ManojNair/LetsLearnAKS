@@ -1,0 +1,28 @@
+apiVersion: v2
+name: containerdemoapp-chart
+description: A Helm chart for the Container Demo App - .NET 9 Web API for AKS demos
+
+# A chart can be either an 'application' or a 'library' chart.
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+version: 0.1.0
+
+# This is the version number of the application being deployed. This version number should be
+# incremented each time you make changes to the application. Versions are not expected to
+# follow Semantic Versioning. They should reflect the version the application is using.
+# It is recommended to use it with quotes.
+appVersion: "v1"
+
+# Additional metadata
+keywords:
+  - dotnet
+  - webapi
+  - kubernetes
+  - aks
+  - demo
+home: https://github.com/ManojNair/LetsLearnAKS
+sources:
+  - https://github.com/ManojNair/LetsLearnAKS

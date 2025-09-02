@@ -480,6 +480,69 @@ kubectl delete namespace demo-apps
 kubectl delete all --all -n demo-apps
 ```
 
+## Alternative: Using Helm Charts
+
+### Overview
+In addition to raw YAML manifests, you can also deploy the same application using Helm charts. Helm is the package manager for Kubernetes and provides templating, versioning, and easier management of complex applications.
+
+### Why Use Helm?
+- **Templating**: Reuse charts with different configurations
+- **Packaging**: Bundle related resources together
+- **Versioning**: Track and rollback changes easily
+- **Parameter Management**: Customize deployments without modifying templates
+
+### Quick Start with Helm
+
+```bash
+# Make sure Helm is installed
+helm version
+
+# Install the simple app using Helm
+helm install my-demo-app simple-app-chart
+
+# Check the deployment
+kubectl get pods
+helm list
+
+# Test the application (NodePort service)
+export NODE_PORT=$(kubectl get service my-demo-app-simple-app-chart -o jsonpath='{.spec.ports[0].nodePort}')
+curl http://localhost:$NODE_PORT/health
+curl http://localhost:$NODE_PORT/weatherforecast
+
+# Cleanup
+helm uninstall my-demo-app
+```
+
+### Customizing the Deployment
+
+```bash
+# Install with custom replica count
+helm install my-demo-app simple-app-chart --set replicaCount=3
+
+# Install with different service type
+helm install my-demo-app simple-app-chart --set service.type=ClusterIP
+
+# Use a custom values file
+helm install my-demo-app simple-app-chart -f my-custom-values.yaml
+```
+
+### Helm vs Raw YAML: When to Use Which?
+
+| Aspect | Raw YAML | Helm Charts |
+|---------|----------|-------------|
+| **Learning** | Better for understanding K8s concepts | Better for production workflows |
+| **Simplicity** | Direct and straightforward | Requires Helm knowledge |
+| **Reusability** | Limited, copy/paste approach | Highly reusable with parameters |
+| **Environments** | Manual changes for different envs | Easy multi-environment deployments |
+| **Complexity** | Good for simple applications | Better for complex applications |
+
+### Recommendation
+- **Start with raw YAML** to understand Kubernetes fundamentals
+- **Move to Helm** when you need parameterization and reusability
+- **Use both** as learning tools to understand the differences
+
+For detailed Helm usage instructions, see the [Simple App Chart README](simple-app-chart/README.md).
+
 ## Key Takeaways
 
 1. **Kubernetes provides** a complete container orchestration platform
